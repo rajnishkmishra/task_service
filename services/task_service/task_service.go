@@ -32,16 +32,16 @@ func (t *TaskService) ListAllTasks(ctx *utils.Context, request vm.ListAllTasksRe
 		return
 	}
 	response.TotalRecord = totalRecord
-	limit := request.Limit
+	limit := request.GetLimit()
 	pages, rem := totalRecord/limit, totalRecord%limit
 	totalPages := pages
 	if rem != 0 {
 		totalPages++
 	}
 	response.TotalPages = totalPages
-	pageNumber := request.PageNumber
+	pageNumber := request.GetPageNumber()
 	response.PageNumber = pageNumber
-	offset := request.Limit * (pageNumber - 1)
+	offset := request.GetLimit() * (pageNumber - 1)
 	dbTasks := []models.Task{}
 	err = dbQuery.Offset(int(offset)).Limit(int(limit)).Find(&dbTasks).Error
 	if err != nil {
@@ -61,7 +61,6 @@ func (t *TaskService) ListAllTasks(ctx *utils.Context, request vm.ListAllTasksRe
 			UpdatedAt:   task.UpdatedAt.Unix(),
 		})
 	}
-
 	return
 }
 
